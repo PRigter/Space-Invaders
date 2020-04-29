@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
 
 
+    
+
     // draw the aliens
     alienInvaders.forEach(function (invader) {
         squares[currentInvaderIndex + invader].classList.add("invader")
