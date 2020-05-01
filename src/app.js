@@ -11,13 +11,12 @@
     let lastDefenseLine = squares.length - (width * 2)
     let invaderId
 
-    // const alienInvaders = [
-    //     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-    //     15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-    //     30, 31, 32, 33, 34, 35, 36, 37, 38, 39
-    // ]
+    const alienInvaders = [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+        30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+    ]
 
-    const alienInvaders = [ 0, 1 , 2, 3 ]
     
 
     // draw the aliens
@@ -74,16 +73,13 @@
         for (let i = 0; i <= alienInvaders.length -1; i++ ) {
             squares[alienInvaders[i]].classList.remove("invader")
         }
-
         for (let i = 0; i <= alienInvaders.length -1; i++) {
             alienInvaders[i] += direction
         }
         for (let i = 0; i <= alienInvaders.length -1; i++) {
-            if (!aliensInvadersTakenDown.includes[i]) {
+            if (!aliensInvadersTakenDown.includes(i)) {
                 squares[alienInvaders[i]].classList.add("invader")
             }
-        
-            
         }
 
 
@@ -100,7 +96,14 @@
                 resultDisplay.textContent = " Game Over"
                 clearInterval(invaderId)
             }
-        }   
+        }
+        
+        
+        // Set the Win Game
+        if (aliensInvadersTakenDown.length === alienInvaders.length) {
+            clearInterval(invaderId)
+            resultDisplay.textContent = "You Win!"
+        }
     }
 
     invaderId = setInterval(moveInvaders, 500)
@@ -119,19 +122,25 @@
             
             // COLlISION check
             if (squares[currentLaserIndex].classList.contains("invader")) {
+                console.log("collision with invader")
                 squares[currentLaserIndex].classList.remove("laser")
+                console.log("removed the laser class")
                 squares[currentLaserIndex].classList.remove("invader")
+                console.log("removed the invader class")
                 squares[currentLaserIndex].classList.add("boom")
+                console.log("Added boom class")
 
                 // Set Boom effect for only 250 ms, clear the class after this time
                 setTimeout(() => squares[currentLaserIndex].classList.remove("boom") , 250)
-                
+                console.log("removed boom class")
                 // Stop the laser - End the Interval that's moving the laser
                 clearInterval(laserId)
+                console.log("Move laser func Stopped ")
 
                 // On collision --> push the Invader taken down index to the Invader Array
                 const alienTakenDown = alienInvaders.indexOf(currentLaserIndex)
                 aliensInvadersTakenDown.push(alienTakenDown)
+                console.log("Pushed the index " + alienTakenDown + " to the Aliens Taken Down Array ")
                 // add 1 to result
                 result++
                 resultDisplay.textContent = result
@@ -153,11 +162,6 @@
 
 
     document.addEventListener("keyup", shoot)
-
-
-
-
-
 
 
 
