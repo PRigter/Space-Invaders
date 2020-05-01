@@ -79,8 +79,11 @@
             alienInvaders[i] += direction
         }
         for (let i = 0; i <= alienInvaders.length -1; i++) {
-            squares[alienInvaders[i]].classList.add("invader")
-            squares[alienInvaders[i]] = 2
+            if (!aliensInvadersTakenDown.includes[i]) {
+                squares[alienInvaders[i]].classList.add("invader")
+            }
+        
+            
         }
 
 
@@ -100,8 +103,59 @@
         }   
     }
 
+    invaderId = setInterval(moveInvaders, 500)
 
-    invaderId = setInterval(moveInvaders, 60)
+
+    // Shoot at aliens
+    function shoot(e) {
+        let laserId
+        let currentLaserIndex = currentShooterIndex
+
+        // move the laser from the shooter to the alien invader
+        function moveLaser() {
+            squares[currentLaserIndex].classList.remove("laser")
+            currentLaserIndex -= width
+            squares[currentLaserIndex].classList.add("laser")
+            
+            // COLlISION check
+            if (squares[currentLaserIndex].classList.contains("invader")) {
+                squares[currentLaserIndex].classList.remove("laser")
+                squares[currentLaserIndex].classList.remove("invader")
+                squares[currentLaserIndex].classList.add("boom")
+
+                // Set Boom effect for only 250 ms, clear the class after this time
+                setTimeout(() => squares[currentLaserIndex].classList.remove("boom") , 250)
+                
+                // Stop the laser - End the Interval that's moving the laser
+                clearInterval(laserId)
+
+                // On collision --> push the Invader taken down index to the Invader Array
+                const alienTakenDown = alienInvaders.indexOf(currentLaserIndex)
+                aliensInvadersTakenDown.push(alienTakenDown)
+                // add 1 to result
+                result++
+                resultDisplay.textContent = result
+            }
+
+            //Remove laser when it reaches the Top Line of the Grid
+            if (currentLaserIndex < width ) {
+                clearInterval(laserId)
+                setTimeout(() => squares[currentLaserIndex].classList.remove("laser"), 100)
+            } 
+        }
+
+
+            if (e.keyCode === 32) {
+                laserId = setInterval(moveLaser, 100)
+            }
+     
+    }
+
+
+    document.addEventListener("keyup", shoot)
+
+
+
 
 
 
