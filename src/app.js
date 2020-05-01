@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+// document.addEventListener("DOMContentLoaded", function () { // enable in the end of dev
     const squares = document.querySelectorAll(".grid div")
     const resultDisplay = document.querySelector("#result")
 
@@ -10,13 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let direction = 1
     let invaderId
 
-    const alienInvaders = [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39
-    ]
+    // const alienInvaders = [
+    //     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    //     15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+    //     30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+    // ]
 
-
+    const alienInvaders = [ 0, 1 , 2, 3 ]
     
 
     // draw the aliens
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // move the shooter on the line
+    // move the shooter on horizontal line
     function moveShooter(e) {
         squares[currentShooterIndex].classList.remove("shooter")
 
@@ -51,16 +51,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener("keydown", moveShooter);
 
-})
+    
+    // move the aliens invaders
+    // 1 - Moving as a group horizontally
+    // 2 - And then moving down a row each time they reach the horizontal limit
+    function moveInvaders() {
+        //** 1º Set the edges of the aliens block
+        const leftEdge = alienInvaders[0] % width === 0
+        const rightEdge = alienInvaders[alienInvaders.length -1] % width === width -1
 
-//EXPERIMENTA AGORa sff
-// dá, mas não pára no final da Array ah ya tens razaão 1 m
-// Muito fixe isto do Live Share!
-// Acho q uma das coisas é o length, passarmos para length - 1 ?    
+        if ((leftEdge && direction === -1) || (rightEdge && direction === 1)) {
+            direction = width
+        } else if (direction === width) {
+            if (leftEdge) {
+                direction = 1
+            } else {
+                direction = -1
+            }
+        }
 
-//experimenta agora -
-// YES funciona !! Mas se quisermos dinamicamente, deixa tentar (squares.length - width)
-// Okay alternativa um pouco manhosa --> (squares.length - width) -1)
-// mais vale a opção do video se o remainder for < width(15) -1 currentIndex ++
+        for (let i = 0; i <= alienInvaders.length -1; i++ ) {
+            squares[alienInvaders[i]].classList.remove("invader")
+            // squares[alienInvaders[i]] = 1
+        }
+        for (let i = 0; i <= alienInvaders.length -1; i++) {
+            alienInvaders[i] += direction
+        }
+        for (let i = 0; i <= alienInvaders.length -1; i++) {
+            squares[alienInvaders[i]].classList.add("invader")
+            // squares[alienInvaders[i]] = 2
+        }
 
-// Vou ter que fechar a loja por hoje. Amanha dia de trabalho.
+
+    }
+
+
+    invaderId = setInterval(moveInvaders, 1500)
+
+
+
+
+
+
+// }) //Enable in the end of dev
+
