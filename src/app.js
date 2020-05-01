@@ -8,6 +8,7 @@
     let aliensInvadersTakenDown = []
     let result = 0
     let direction = 1
+    let lastDefenseLine = squares.length - (width * 2)
     let invaderId
 
     // const alienInvaders = [
@@ -72,21 +73,35 @@
 
         for (let i = 0; i <= alienInvaders.length -1; i++ ) {
             squares[alienInvaders[i]].classList.remove("invader")
-            // squares[alienInvaders[i]] = 1
         }
+
         for (let i = 0; i <= alienInvaders.length -1; i++) {
             alienInvaders[i] += direction
         }
         for (let i = 0; i <= alienInvaders.length -1; i++) {
             squares[alienInvaders[i]].classList.add("invader")
-            // squares[alienInvaders[i]] = 2
+            squares[alienInvaders[i]] = 2
         }
 
 
+        // Set Game Over
+        if (squares[currentShooterIndex].classList.contains("invader", "shooter")) {
+            resultDisplay.textContent = " Game Over"
+            squares[currentShooterIndex].classList.add("boom")
+            clearInterval(invaderId)
+        }
+
+        // Reaching Last Defense Line -> Game Over
+        for (let i = 0; i < alienInvaders.length -1; i++) {
+            if (alienInvaders[i] > lastDefenseLine) {
+                resultDisplay.textContent = " Game Over"
+                clearInterval(invaderId)
+            }
+        }   
     }
 
 
-    invaderId = setInterval(moveInvaders, 1500)
+    invaderId = setInterval(moveInvaders, 60)
 
 
 
