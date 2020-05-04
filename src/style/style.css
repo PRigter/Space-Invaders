@@ -15,14 +15,16 @@ body {
 
 .grid {
     display: flex;
+    flex-wrap: wrap;
     width: 300px;
     height: 300px;
+    border: 1px solid;
     background: rgb(177, 170, 170);
 }
 
 .grid div {
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
 }
 
 .shooter {
