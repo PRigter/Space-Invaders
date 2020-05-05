@@ -65,6 +65,7 @@ let model = {
             view.alienInvaders[i] += direction
         }
         
+        
     }
 }
 
