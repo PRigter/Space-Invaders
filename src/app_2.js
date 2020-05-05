@@ -12,23 +12,23 @@ let view = {
     alienInvadersTakenDown: [],
     result: 0,
     direction: 1,
-    
+
     get lastDefenseLine() {
         return squares.length - (this.width * 2)
     },
 
-    resultDisplay: function() {
+    resultDisplay: function () {
         resultDisplay.textContent = this.result
     },
 
-    shooterDisplay: function() {
+    shooterDisplay: function () {
         squares[this.currentShooterIndex].classList.add("shooter")
     },
 
-    aliensDisplay: function() {
+    aliensDisplay: function () {
         currentInvaderIndex = this.currentInvaderIndex
-    
-        this.alienInvaders.forEach(function(invader) {
+
+        this.alienInvaders.forEach(function (invader) {
             squares[invader + currentInvaderIndex].classList.add("invader")
         })
     }
@@ -38,40 +38,40 @@ let view = {
 
 
 let model = {
-    invaderId: function() {
+    invaderId: function () {
         setInterval(this.aliensMove, 500)
     },
 
-    aliensMove: function() {
+    aliensMove: function () {
         const leftEdge = view.alienInvaders[0] % view.width === 0
-        const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width -1
-        
+        const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width - 1
+
         if ((leftEdge && view.direction === -1) || (rightEdge && view.direction === 1)) {
             view.direction = view.width
         } else if (view.direction === view.width) {
             if (leftEdge) {
                 view.direction = 1
             } else {
-                view.direction -1
+                view.direction - 1
             }
         }
 
         console.log(view.alienInvaders.length)
 
-        for (let i = 0; i <= view.alienInvaders.length -1; i++) {
+        for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             squares[view.alienInvaders[i]].classList.remove("invader")
         }
-        for (let i = 0; i <= view.alienInvaders.length -1; i++) {
+        for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             view.alienInvaders[i] += direction
         }
-        
-        
+
+
     }
 }
 
 
 let controller = {
-    shooterMove: function(e) {
+    shooterMove: function (e) {
         squares[view.currentShooterIndex].classList.remove("shooter")
 
         switch (e.keyCode) {
@@ -90,13 +90,13 @@ let controller = {
         }
 
         squares[view.currentShooterIndex].classList.add("shooter")
-    },  
-    
+    },
 
-    fire: function(e) {
+
+    fire: function (e) {
         if (e.keyCode === 32) {
             console.log("space bar ")
-        } 
+        }
     }
 }
 
@@ -112,7 +112,7 @@ document.addEventListener("keyup", controller.fire)
 // Testing 2, new local repo
 // more testing from repo 2
 // testing from repo 1
-    
+
 
 
 
