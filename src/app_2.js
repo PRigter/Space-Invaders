@@ -14,7 +14,7 @@ let view = {
     direction: 1,
 
     get lastDefenseLine() {
-        return squares.length - (this.width * 2)
+        return console.log(squares.length - (this.width * 2))
     },
 
     resultDisplay: function () {
@@ -55,17 +55,24 @@ let model = {
                 view.direction - 1
             }
         }
-
-        console.log(view.alienInvaders.length)
-
+    
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             squares[view.alienInvaders[i]].classList.remove("invader")
         }
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
-            view.alienInvaders[i] += direction
+            view.alienInvaders[i] += view.direction
+        }
+        for (let i = 0; i <= view.alienInvaders.length -1; i++) {
+            if (!view.alienInvadersTakenDown.includes(i)) {
+                squares[view.alienInvaders[i]].classList.add("invader")
+            }  
         }
 
 
+    },
+
+    gameOver: function() {
+        //* To be continued
     }
 }
 
@@ -95,7 +102,48 @@ let controller = {
 
     fire: function (e) {
         if (e.keyCode === 32) {
-            console.log("space bar ")
+            
+            let laserId
+            let currentLaserIndex = view.currentShooterIndex
+            console.log(currentLaserIndex)
+          
+
+
+            function moveLaser() { 
+                squares[currentLaserIndex].classList.remove("laser")
+                currentLaserIndex -= view.width
+                squares[currentLaserIndex].classList.add("laser")
+
+                // Collision Detection
+                if (squares[currentLaserIndex].classList.contains("invader")) {
+                    squares[currentLaserIndex].classList.remove("laser")
+                    squares[currentLaserIndex].classList.remove("invader")
+                    squares[currentLaserIndex].classList.add("boom")
+
+                    setTimeout(function() {
+                        squares[currentLaserIndex].classList.remove("boom")
+                    }, 250)
+
+                    clearInterval(laserId)
+
+                    const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
+                    view.alienInvadersTakenDown.push(alienShot)
+                    
+                    view.result++
+                    resultDisplay.textContent = view.result
+                }
+
+                //Remove laser when it reaches the Top Line of the Grid
+                if (currentLaserIndex < view.width) {
+                    clearInterval(laserId)
+                    setInterval(() => squares[currentLaserIndex].classList.remove("laser") , 100)
+                }
+            }
+
+           laserId = setInterval(moveLaser, 140)
+           
+        
+
         }
     }
 }
@@ -103,17 +151,6 @@ let controller = {
 
 document.addEventListener("keydown", controller.shooterMove)
 document.addEventListener("keyup", controller.fire)
-
-
-
-
-
-// Testing
-// Testing 2, new local repo
-// more testing from repo 2
-// testing from repo 1
-
-
 
 
 
