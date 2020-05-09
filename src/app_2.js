@@ -45,40 +45,15 @@ let view = {
 
 
 
-let objectTest = {
-    gameStatus: false,
-
-    checkStatus: function() {
-        let gameOn = this.gameStatus
-        let i
-        for (i = 0; i < 2; i++) {
-            if (gameOn === false) {
-                console.log("It's False")
-            }
-        }
-
-    }
-}
-
-// objectTest.checkStatus()
-// setInterval(function() {
-//     objectTest.checkStatus()
-// }, 1000)
-
-// setInterval(objectTest.checkStatus, 1000)
-
-
-
 
 let model = {
-    invaderSpeed: 80,
+    invaderSpeed: 800,
     gameStatus: true,
 
     aliensMove: function() {
         // let gameOn = this.gameStatus
         
-
-               
+              
 
         const leftEdge = view.alienInvaders[0] % view.width === 0
         const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width - 1
@@ -101,9 +76,11 @@ let model = {
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             view.alienInvaders[i] += view.direction
             
-            if (view.alienInvaders[i] > 30) {
+            // Check for Game Over --> When Aliens reaches last 2 row's
+                // Está com 30 para teste apenas --> corrigir para: view.lastDefenseLine()
+            if (view.alienInvaders[i] > view.lastDefenseLine) {
                 clearInterval(invaderId)
-                
+                view.gameOverDisplay()
                 
                 // gameOn = false
                 console.log(this.gameStatus)
@@ -118,28 +95,14 @@ let model = {
 
         
         console.log("Aliens moving")
-        // console.log(gameOn)
-        console.log(this.gameStatus)
-    
         
-        // Check for Game Over
-        // if (view.alienInvaders[i] > 50) {
-                
-        //     // console.log(gameOn)
-        //     clearInterval(invaderId)
-        //     view.gameOverDisplay()
-            
-        // }
-
+    
 
     }
 }
 
-// model.aliensMove()
 const invaderId = setInterval(model.aliensMove, model.invaderSpeed)
-setInterval(function() {
-    console.log(model.gameStatus)
-}, 2500)
+
 
 let controller = {
     shooterMove: function (e) {
@@ -172,36 +135,41 @@ let controller = {
             console.log(currentLaserIndex)
           
 
+//ve la o face o que mandei.
+            function moveLaser() {
+                
+                
 
-            function moveLaser() { 
-                squares[currentLaserIndex].classList.remove("laser")
-                currentLaserIndex -= view.width
-                squares[currentLaserIndex].classList.add("laser")
-
-                // Collision Detection
-                if (squares[currentLaserIndex].classList.contains("invader")) {
-                    squares[currentLaserIndex].classList.remove("laser")
-                    squares[currentLaserIndex].classList.remove("invader")
-                    squares[currentLaserIndex].classList.add("boom")
-
-                    setTimeout(function() {
-                        squares[currentLaserIndex].classList.remove("boom")
-                    }, 250)
-
-                    clearInterval(laserId)
-
-                    const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
-                    view.alienInvadersTakenDown.push(alienShot)
                     
-                    view.result++
-                    resultDisplay.textContent = view.result
+                    squares[currentLaserIndex].classList.remove("laser")
+                    currentLaserIndex -= view.width
+                    squares[currentLaserIndex].classList.add("laser")
 
-                    // Check for Win Game
-                    if (view.alienInvadersTakenDown.length === view.alienInvaders.length) {
-                        clearInterval(invaderId)
-                        view.gameWinDisplay()
+                    // Collision Detection
+                    if (squares[currentLaserIndex].classList.contains("invader")) {
+                        squares[currentLaserIndex].classList.remove("laser")
+                        squares[currentLaserIndex].classList.remove("invader")
+                        squares[currentLaserIndex].classList.add("boom")
+
+                        setTimeout(function() {
+                            squares[currentLaserIndex].classList.remove("boom")
+                        }, 250)
+
+                        clearInterval(laserId)
+
+                        const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
+                        view.alienInvadersTakenDown.push(alienShot)
+                        
+                        view.result++
+                        resultDisplay.textContent = view.result
+
+                        // Check for Win Game
+                        if (view.alienInvadersTakenDown.length === view.alienInvaders.length) {
+                            clearInterval(invaderId)
+                            view.gameWinDisplay()
+                        }
                     }
-                }
+                
 
                 //Remove laser when it reaches the Top Line of the Grid
                 if (currentLaserIndex < view.width) {
@@ -211,6 +179,7 @@ let controller = {
             }
 
            laserId = setInterval(moveLaser, 140)
+    
            
         
 
