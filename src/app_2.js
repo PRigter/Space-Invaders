@@ -14,7 +14,7 @@ let view = {
     direction: 1,
 
     get lastDefenseLine() {
-        return console.log(squares.length - (this.width * 2))
+        return squares.length - (this.width * 2)
     },
 
     resultDisplay: function () {
@@ -31,18 +31,55 @@ let view = {
         this.alienInvaders.forEach(function (invader) {
             squares[invader + currentInvaderIndex].classList.add("invader")
         })
+    },
+
+    gameWinDisplay: function() {
+        resultDisplay.innerHTML = "YOU WIN!"
+    },
+
+    gameOverDisplay: function() {
+        resultDisplay.innerHTML = "Game Over"
     }
 
 }
 
 
 
-let model = {
-    invaderId: function () {
-        setInterval(this.aliensMove, 500)
-    },
+let objectTest = {
+    gameStatus: false,
 
-    aliensMove: function () {
+    checkStatus: function() {
+        let gameOn = this.gameStatus
+        let i
+        for (i = 0; i < 2; i++) {
+            if (gameOn === false) {
+                console.log("It's False")
+            }
+        }
+
+    }
+}
+
+// objectTest.checkStatus()
+// setInterval(function() {
+//     objectTest.checkStatus()
+// }, 1000)
+
+// setInterval(objectTest.checkStatus, 1000)
+
+
+
+
+let model = {
+    invaderSpeed: 80,
+    gameStatus: true,
+
+    aliensMove: function() {
+        // let gameOn = this.gameStatus
+        
+
+               
+
         const leftEdge = view.alienInvaders[0] % view.width === 0
         const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width - 1
 
@@ -59,23 +96,50 @@ let model = {
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             squares[view.alienInvaders[i]].classList.remove("invader")
         }
+
+        
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             view.alienInvaders[i] += view.direction
+            
+            if (view.alienInvaders[i] > 30) {
+                clearInterval(invaderId)
+                
+                
+                // gameOn = false
+                console.log(this.gameStatus)
+            }
         }
+
         for (let i = 0; i <= view.alienInvaders.length -1; i++) {
             if (!view.alienInvadersTakenDown.includes(i)) {
                 squares[view.alienInvaders[i]].classList.add("invader")
             }  
         }
 
+        
+        console.log("Aliens moving")
+        // console.log(gameOn)
+        console.log(this.gameStatus)
+    
+        
+        // Check for Game Over
+        // if (view.alienInvaders[i] > 50) {
+                
+        //     // console.log(gameOn)
+        //     clearInterval(invaderId)
+        //     view.gameOverDisplay()
+            
+        // }
 
-    },
 
-    gameOver: function() {
-        //* To be continued
     }
 }
 
+// model.aliensMove()
+const invaderId = setInterval(model.aliensMove, model.invaderSpeed)
+setInterval(function() {
+    console.log(model.gameStatus)
+}, 2500)
 
 let controller = {
     shooterMove: function (e) {
@@ -131,6 +195,12 @@ let controller = {
                     
                     view.result++
                     resultDisplay.textContent = view.result
+
+                    // Check for Win Game
+                    if (view.alienInvadersTakenDown.length === view.alienInvaders.length) {
+                        clearInterval(invaderId)
+                        view.gameWinDisplay()
+                    }
                 }
 
                 //Remove laser when it reaches the Top Line of the Grid
@@ -161,6 +231,6 @@ function init() {
     view.resultDisplay()
     view.shooterDisplay()
     view.aliensDisplay()
-    model.invaderId()
+
 
 }
