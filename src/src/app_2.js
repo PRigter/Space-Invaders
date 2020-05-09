@@ -2,8 +2,7 @@
 // Global Variables
 const squares = document.querySelectorAll(".grid div")
 const resultDisplay = document.querySelector("#result")
-let lastKeyTimeShoot = 0;
-let currentTime = Date.now();
+
 
 let view = {
     width: 15,
@@ -34,11 +33,11 @@ let view = {
         })
     },
 
-    gameWinDisplay: function () {
+    gameWinDisplay: function() {
         resultDisplay.innerHTML = "YOU WIN!"
     },
 
-    gameOverDisplay: function () {
+    gameOverDisplay: function() {
         resultDisplay.innerHTML = "Game Over"
     }
 
@@ -51,10 +50,10 @@ let model = {
     invaderSpeed: 800,
     gameStatus: true,
 
-    aliensMove: function () {
+    aliensMove: function() {
         // let gameOn = this.gameStatus
-
-
+        
+              
 
         const leftEdge = view.alienInvaders[0] % view.width === 0
         const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width - 1
@@ -68,36 +67,36 @@ let model = {
                 view.direction - 1
             }
         }
-
+    
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             squares[view.alienInvaders[i]].classList.remove("invader")
         }
 
-
+        
         for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
             view.alienInvaders[i] += view.direction
-
+            
             // Check for Game Over --> When Aliens reaches last 2 row's
-            // Está com 30 para teste apenas --> corrigir para: view.lastDefenseLine()
+                // Está com 30 para teste apenas --> corrigir para: view.lastDefenseLine()
             if (view.alienInvaders[i] > view.lastDefenseLine) {
                 clearInterval(invaderId)
                 view.gameOverDisplay()
-
+                
                 // gameOn = false
                 console.log(this.gameStatus)
             }
         }
 
-        for (let i = 0; i <= view.alienInvaders.length - 1; i++) {
+        for (let i = 0; i <= view.alienInvaders.length -1; i++) {
             if (!view.alienInvadersTakenDown.includes(i)) {
                 squares[view.alienInvaders[i]].classList.add("invader")
-            }
+            }  
         }
 
-
+        
         console.log("Aliens moving")
-
-
+        
+    
 
     }
 }
@@ -129,20 +128,19 @@ let controller = {
 
 
     fire: function (e) {
-      
-        currentTime = Date.now();
-        if (currentTime - lastKeyTimeShoot > 10000) {
+        if (e.keyCode === 32) {
+            
+            let laserId
+            let currentLaserIndex = view.currentShooterIndex
+            console.log(currentLaserIndex)
+          
 
+//ve la o face o que mandei.
+            function moveLaser() {
+                
+                
 
-            if (e.keyCode === 32) {
-                lastKeyTimeShoot = Date.now();
-                let laserId
-                let currentLaserIndex = view.currentShooterIndex
-
-                console.log(currentLaserIndex)
-
-                function moveLaser() {
-
+                    
                     squares[currentLaserIndex].classList.remove("laser")
                     currentLaserIndex -= view.width
                     squares[currentLaserIndex].classList.add("laser")
@@ -153,7 +151,7 @@ let controller = {
                         squares[currentLaserIndex].classList.remove("invader")
                         squares[currentLaserIndex].classList.add("boom")
 
-                        setTimeout(function () {
+                        setTimeout(function() {
                             squares[currentLaserIndex].classList.remove("boom")
                         }, 250)
 
@@ -161,7 +159,7 @@ let controller = {
 
                         const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
                         view.alienInvadersTakenDown.push(alienShot)
-
+                        
                         view.result++
                         resultDisplay.textContent = view.result
 
@@ -171,18 +169,20 @@ let controller = {
                             view.gameWinDisplay()
                         }
                     }
+                
 
-
-                    //Remove laser when it reaches the Top Line of the Grid
-                    if (currentLaserIndex < view.width) {
-                        clearInterval(laserId)
-                        setInterval(() => squares[currentLaserIndex].classList.remove("laser"), 100)
-                    }
+                //Remove laser when it reaches the Top Line of the Grid
+                if (currentLaserIndex < view.width) {
+                    clearInterval(laserId)
+                    setInterval(() => squares[currentLaserIndex].classList.remove("laser") , 100)
                 }
-
-                laserId = setInterval(moveLaser, 140)
-
             }
+
+           laserId = setInterval(moveLaser, 140)
+    
+           
+        
+
         }
     }
 }
