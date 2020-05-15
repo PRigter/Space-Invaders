@@ -47,8 +47,6 @@ let model = {
     gameStatus: true,
 
     aliensMove: function () {
-
-
         const leftEdge = view.alienInvaders[0] % view.width === 0
         const rightEdge = view.alienInvaders[view.alienInvaders.lenght - 1] % view.width === view.width - 1
 
@@ -75,9 +73,6 @@ let model = {
             if (view.alienInvaders[i] > view.lastDefenseLine) {
                 clearInterval(invaderId)
                 view.gameOverDisplay()
-
-                // gameOn = false
-                console.log(this.gameStatus)
             }
         }
 
@@ -86,31 +81,23 @@ let model = {
                 squares[view.alienInvaders[i]].classList.add("invader")
             }
         }
-
-
-        // console.log("Aliens moving")
-
-
-
     }
 }
 
-const invaderId = setInterval(model.aliensMove, model.invaderSpeed)
-
 
 let controller = {
+    laserSpeed: 210,
+
     shooterMove: function (e) {
         squares[view.currentShooterIndex].classList.remove("shooter")
 
         switch (e.keyCode) {
             case 37:
-                // console.log("left")
                 if (view.currentShooterIndex % view.width !== 0) {
                     view.currentShooterIndex -= 1
                 }
                 break
             case 39:
-                // console.log("right")
                 if (view.currentShooterIndex % view.width < view.width - 1) {
                     view.currentShooterIndex += 1
                 }
@@ -119,24 +106,15 @@ let controller = {
 
         squares[view.currentShooterIndex].classList.add("shooter")
     },
-    
-    laserSpeed: 340,
 
     fire: function() {
-        // debugger
         let currentLaserIndex = view.currentShooterIndex
-        let laserId
-        let laserIsMoving
-
-    
+        
         let moveLaser = function() {
-           
             squares[currentLaserIndex].classList.remove("laser")
             currentLaserIndex -= view.width
             squares[currentLaserIndex].classList.add("laser")
-            
-            // console.log(currentLaserIndex)
-
+        
             // Collision Detection
             if (squares[currentLaserIndex].classList.contains("invader")) {
                 squares[currentLaserIndex].classList.remove("laser")
@@ -148,7 +126,7 @@ let controller = {
                 }, 250)
 
                 clearInterval(laserId)
-
+                // If Alien has same index as same index as Laser -> Push that Alien Index to the Array
                 const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
                 view.alienInvadersTakenDown.push(alienShot)
 
@@ -167,52 +145,24 @@ let controller = {
                 clearInterval(laserId)
                 setInterval(() => squares[currentLaserIndex].classList.remove("laser"), 100)
             }
-
-
-             // Check if it's still a laser on the move - Only 1 Laser at a time
-            if (currentLaserIndex < (view.currentShooterIndex + view.width) && currentLaserIndex > view.width ) {
-                console.log("laser is moving")
-                laserIsMoving = true
-                return true
-                
-                
-            } else if (currentLaserIndex < view.width) {
-                console.log("Laser has Stopped")
-                laserIsMoving = false
-                return false  
-            }
             
-            // console.log(currentLaserIndex)
-            // console.log(laserIsMoving)
-        }
+        }        
 
-
-        
-            laserId = setInterval(function() {
-                moveLaser()
-            }, this.laserSpeed) 
-
-
-            console.log(moveLaser())
-            if (moveLaser() == true) {
-                console.log("move laser is true")
-                return true
-            }
+        let laserId = setInterval(function() {
+            moveLaser()
+        }, this.laserSpeed) 
 
     }
-        
-    
-    
 }
 
 
+const invaderId = setInterval(model.aliensMove, model.invaderSpeed)
 
 document.addEventListener("keydown", controller.shooterMove)
 document.addEventListener("keyup", function(e) {
-
     let laserActive
 
-    // Check if theres a laser on the move
+    // Check if theres a laser already on the move
     for (let i = 0; i < squares.length; i++) {
         if (squares[i].classList.contains("laser")) {
             console.log("found class")
@@ -225,14 +175,13 @@ document.addEventListener("keyup", function(e) {
     if (e.keyCode === 32 && laserActive != true) {
         controller.fire()
     }
-
 })
 
 
 
 init()
 
-// INITIAL FUNCTION
+// INITIAL FUNCTIONS
 function init() {
     view.resultDisplay()
     view.shooterDisplay()
