@@ -39,10 +39,7 @@ let view = {
     gameOverDisplay: function () {
         resultDisplay.innerHTML = "Game Over"
     }
-
 }
-
-
 
 
 let model = {
@@ -50,8 +47,6 @@ let model = {
     gameStatus: true,
 
     aliensMove: function () {
-        // let gameOn = this.gameStatus
-
 
 
         const leftEdge = view.alienInvaders[0] % view.width === 0
@@ -210,13 +205,14 @@ let controller = {
     
 }
 
-// console.log(controller.fire)
+
 
 document.addEventListener("keydown", controller.shooterMove)
 document.addEventListener("keyup", function(e) {
 
     let laserActive
 
+    // Check if theres a laser on the move
     for (let i = 0; i < squares.length; i++) {
         if (squares[i].classList.contains("laser")) {
             console.log("found class")
@@ -225,12 +221,9 @@ document.addEventListener("keyup", function(e) {
         }
     }
 
-    console.log(laserActive)
-
+    // Only allow fire, when Space Key pressed AND there is no other laser on the move
     if (e.keyCode === 32 && laserActive != true) {
         controller.fire()
-        // controller.fire2()
-        // console.log("fire!")
     }
 
 })
