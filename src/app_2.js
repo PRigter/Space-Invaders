@@ -1,9 +1,7 @@
-
 // Global Variables
 const squares = document.querySelectorAll(".grid div")
 const resultDisplay = document.querySelector("#result")
-let lastKeyTimeShoot = 0;
-let currentTime = Date.now();
+
 
 let view = {
     width: 15,
@@ -95,7 +93,7 @@ let model = {
         }
 
 
-        console.log("Aliens moving")
+        // console.log("Aliens moving")
 
 
 
@@ -111,13 +109,13 @@ let controller = {
 
         switch (e.keyCode) {
             case 37:
-                console.log("left")
+                // console.log("left")
                 if (view.currentShooterIndex % view.width !== 0) {
                     view.currentShooterIndex -= 1
                 }
                 break
             case 39:
-                console.log("right")
+                // console.log("right")
                 if (view.currentShooterIndex % view.width < view.width - 1) {
                     view.currentShooterIndex += 1
                 }
@@ -126,70 +124,116 @@ let controller = {
 
         squares[view.currentShooterIndex].classList.add("shooter")
     },
+    
+    laserSpeed: 340,
 
+    fire: function() {
+        // debugger
+        let currentLaserIndex = view.currentShooterIndex
+        let laserId
+        let laserIsMoving
 
-    fire: function (e) {
-      
-        currentTime = Date.now();
-        if (currentTime - lastKeyTimeShoot > 10000) {
+    
+        let moveLaser = function() {
+           
+            squares[currentLaserIndex].classList.remove("laser")
+            currentLaserIndex -= view.width
+            squares[currentLaserIndex].classList.add("laser")
+            
+            // console.log(currentLaserIndex)
 
+            // Collision Detection
+            if (squares[currentLaserIndex].classList.contains("invader")) {
+                squares[currentLaserIndex].classList.remove("laser")
+                squares[currentLaserIndex].classList.remove("invader")
+                squares[currentLaserIndex].classList.add("boom")
 
-            if (e.keyCode === 32) {
-                lastKeyTimeShoot = Date.now();
-                let laserId
-                let currentLaserIndex = view.currentShooterIndex
+                setTimeout(function () {
+                    squares[currentLaserIndex].classList.remove("boom")
+                }, 250)
 
-                console.log(currentLaserIndex)
+                clearInterval(laserId)
 
-                function moveLaser() {
+                const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
+                view.alienInvadersTakenDown.push(alienShot)
 
-                    squares[currentLaserIndex].classList.remove("laser")
-                    currentLaserIndex -= view.width
-                    squares[currentLaserIndex].classList.add("laser")
+                view.result++
+                resultDisplay.textContent = view.result
 
-                    // Collision Detection
-                    if (squares[currentLaserIndex].classList.contains("invader")) {
-                        squares[currentLaserIndex].classList.remove("laser")
-                        squares[currentLaserIndex].classList.remove("invader")
-                        squares[currentLaserIndex].classList.add("boom")
-
-                        setTimeout(function () {
-                            squares[currentLaserIndex].classList.remove("boom")
-                        }, 250)
-
-                        clearInterval(laserId)
-
-                        const alienShot = view.alienInvaders.indexOf(currentLaserIndex)
-                        view.alienInvadersTakenDown.push(alienShot)
-
-                        view.result++
-                        resultDisplay.textContent = view.result
-
-                        // Check for Win Game
-                        if (view.alienInvadersTakenDown.length === view.alienInvaders.length) {
-                            clearInterval(invaderId)
-                            view.gameWinDisplay()
-                        }
-                    }
-
-
-                    //Remove laser when it reaches the Top Line of the Grid
-                    if (currentLaserIndex < view.width) {
-                        clearInterval(laserId)
-                        setInterval(() => squares[currentLaserIndex].classList.remove("laser"), 100)
-                    }
+                // Check for Win Game
+                if (view.alienInvadersTakenDown.length === view.alienInvaders.length) {
+                    clearInterval(invaderId)
+                    view.gameWinDisplay()
                 }
-
-                laserId = setInterval(moveLaser, 140)
-
             }
+
+            //Remove laser when it reaches the Top Line of the Grid
+            if (currentLaserIndex < view.width) {
+                clearInterval(laserId)
+                setInterval(() => squares[currentLaserIndex].classList.remove("laser"), 100)
+            }
+
+
+             // Check if it's still a laser on the move - Only 1 Laser at a time
+            if (currentLaserIndex < (view.currentShooterIndex + view.width) && currentLaserIndex > view.width ) {
+                console.log("laser is moving")
+                laserIsMoving = true
+                return true
+                
+                
+            } else if (currentLaserIndex < view.width) {
+                console.log("Laser has Stopped")
+                laserIsMoving = false
+                return false  
+            }
+            
+            // console.log(currentLaserIndex)
+            // console.log(laserIsMoving)
         }
+
+
+        
+            laserId = setInterval(function() {
+                moveLaser()
+            }, this.laserSpeed) 
+
+
+            console.log(moveLaser())
+            if (moveLaser() == true) {
+                console.log("move laser is true")
+                return true
+            }
+
     }
+        
+    
+    
 }
 
+// console.log(controller.fire)
 
 document.addEventListener("keydown", controller.shooterMove)
-document.addEventListener("keyup", controller.fire)
+document.addEventListener("keyup", function(e) {
+
+    let laserActive
+
+    for (let i = 0; i < squares.length; i++) {
+        if (squares[i].classList.contains("laser")) {
+            console.log("found class")
+            laserActive = true
+            break
+        }
+    }
+
+    console.log(laserActive)
+
+    if (e.keyCode === 32 && laserActive != true) {
+        controller.fire()
+        // controller.fire2()
+        // console.log("fire!")
+    }
+
+})
 
 
 
@@ -200,6 +244,5 @@ function init() {
     view.resultDisplay()
     view.shooterDisplay()
     view.aliensDisplay()
-
 
 }
